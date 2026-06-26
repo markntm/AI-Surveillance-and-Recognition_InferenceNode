@@ -31,7 +31,9 @@ last_lpr_request = {}   # track_id -> timestamp when we last enqueued LPR for th
 plate_cache = {}        # track_id -> {'text':..., 'conf':..., 'ts':...}
 
 # Video source (webcam)
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+#cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+#cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
 # Start LPR worker threads
 workers = []
