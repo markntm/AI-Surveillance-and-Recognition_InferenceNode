@@ -4,8 +4,8 @@ import time
 
 from JN_OBJ_detection.obj_detector import ObjectDetector
 from JN_OBJ_detection.obj_tracker import Tracker
-from JN_LP_detection.lpr_worker import LPRWorker
 from JN_OBJ_detection.utilities import crop_bbox, extract_dominant_color, infer_human_behavior
+from JN_LP_detection.lpr_worker import LPRWorker
 from event_out import emit
 from dashboard_client import post_live, post_telemetry
 from config.secret import constants
@@ -31,7 +31,7 @@ last_lpr_request = {}   # track_id -> timestamp when we last enqueued LPR for th
 plate_cache = {}        # track_id -> {'text':..., 'conf':..., 'ts':...}
 
 # Video source (webcam)
-cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+cap = cv2.VideoCapture(0)
 #cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
 #cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
