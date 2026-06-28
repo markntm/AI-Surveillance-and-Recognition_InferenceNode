@@ -5,9 +5,15 @@ from config.secret import rpi_IP, PORT
 
 SERVER_URL = os.getenv("CC_SERVER_URL", f"{rpi_IP}:{PORT}")
 
+_last_metrics_post = 0
+_last_live_sent = {}  # track_id -> ts
+live_throttle_sec = 1.0  # avoid spamming the server
 
-def post_telemetry(_last_metrics_post, workers_active: int, lpr_queue_size: int, active_tracks: int, camera_id="cam_01"):
+
+def post_telemetry(workers_active: int, lpr_queue_size: int, active_tracks: int, camera_id="cam_01"):
     """Live health and performance stats"""
+    global _last_metrics_post
+
     now = time.time()
     if now - _last_metrics_post < 0.8:
         return
@@ -23,8 +29,10 @@ def post_telemetry(_last_metrics_post, workers_active: int, lpr_queue_size: int,
         pass
 
 
-def post_live(_last_live_sent, live_throttle_sec, track_id: str, label: str, confidence: float, license_plate: str | None = None, camera_id="cam_01"):
+def post_live(track_id: str, label: str, confidence: float, license_plate: str | None = None, camera_id="cam_01"):
     """Live feed from camera"""
+    global _last_live_sent
+
     now = time.time()
     last = _last_live_sent.get(track_id, 0)
     if now - last < live_throttle_sec and license_plate is None:

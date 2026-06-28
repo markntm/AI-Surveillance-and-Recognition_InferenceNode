@@ -10,11 +10,6 @@ from event_out import emit
 from dashboard_client import post_live, post_telemetry
 from config.secret import constants
 
-
-_last_metrics_post = 0
-_last_live_sent = {}  # track_id -> ts
-LIVE_THROTTLE_SEC = 1.0  # avoid spamming the server
-
 # ---------------- Setup ----------------
 seen_tracks = set()
 vehicle_sent = set()
@@ -59,9 +54,9 @@ def YOLO_programme():
 
             # 2) Track (DeepSORT)
             tracks = tracker.update(detections, frame)
+            print(f"[DEBUG] Detections: {len(detections)}, Confirmed tracks: {len(tracks)}")
 
             post_telemetry(
-                _last_metrics_post,
                 workers_active=len(workers),
                 lpr_queue_size=lpr_task_q.qsize(),
                 active_tracks=len(tracks)
@@ -75,8 +70,6 @@ def YOLO_programme():
                 conf = float(tr["conf"] or 0.0)
                 # dashboard
                 post_live(
-                    _last_live_sent,
-                    LIVE_THROTTLE_SEC,
                     tid,
                     label,
                     conf
@@ -152,8 +145,6 @@ def YOLO_programme():
                 }
                 # Also push the plate to dashboard live stream
                 post_live(
-                    _last_live_sent,
-                    LIVE_THROTTLE_SEC,
                     tid,
                     "vehicle",
                     float(res["plate_conf"] or 0.0),
