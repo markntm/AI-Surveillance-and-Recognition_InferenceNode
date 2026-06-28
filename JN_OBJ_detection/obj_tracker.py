@@ -19,7 +19,7 @@ class Tracker:
             x1, y1, x2, y2 = d["bbox"]
             w = x2 - x1
             h = y2 - y1
-            ds_input.append(([x1, y1, w, h], d["conf"], d["class_id"]))
+            ds_input.append(([x1, y1, w, h], d["conf"], d["label"]))
 
         tracks = self.tracker.update_tracks(ds_input, frame=frame)
         out = []
@@ -36,7 +36,7 @@ class Tracker:
             out.append({
                 "track_id": t.track_id,
                 "bbox": [int(ltrb[0]), int(ltrb[1]), int(ltrb[2]), int(ltrb[3])],
-                "label": label,
+                "label": str(label),
                 "conf": conf
             })
         return out

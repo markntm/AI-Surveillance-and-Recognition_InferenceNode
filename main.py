@@ -127,7 +127,7 @@ def YOLO_programme():
                         "type": "person_update",
                         "camera_id": "cam_01",
                         "track_id": tid,
-                        "behavior": infer_human_behavior(tr) or "unknown",
+                        "behavior": "unknown",  # @TODO infer_human_behavior(tr) implemented once track history accumulation made
                         "confidence": conf
                     }
                     emit(person_payload)
