@@ -7,6 +7,7 @@ SERVER_URL = os.getenv("CC_SERVER_URL", f"{rpi_IP}:{PORT}")
 API_KEY = os.getenv("CC_API_KEY", dev_key)
 
 event_buffer = {}
+_session = requests.Session()
 
 
 def emit(payload: dict):
@@ -68,7 +69,7 @@ def emit(payload: dict):
         }
 
         try:
-            r = requests.post(
+            r = _session.post(
                 f"{SERVER_URL}/api/events",
                 json=event_payload,
                 headers={"x-api-key": API_KEY},
