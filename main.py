@@ -11,6 +11,8 @@ from dashboard_client import post_live, post_telemetry
 from config.secret import constants
 
 # ---------------- Setup ----------------
+camera_id = "CAM_01"
+
 seen_tracks = set()
 vehicle_sent = set()
 person_sent = set()
@@ -54,7 +56,7 @@ def YOLO_programme():
 
             # 2) Track (DeepSORT)
             tracks = tracker.update(detections, frame)
-            print(f"[DEBUG] Detections: {len(detections)}, Confirmed tracks: {len(tracks)}")
+            # print(f"[DEBUG] Detections: {len(detections)}, Confirmed tracks: {len(tracks)}")
 
             post_telemetry(
                 workers_active=len(workers),
@@ -79,7 +81,7 @@ def YOLO_programme():
                 if tid not in seen_tracks:
                     emit({
                         "type": "event_opened",
-                        "camera_id": "cam_01",
+                        "camera_id": camera_id,
                         "track_id": tid,
                         "object_type": label,
                         "confidence": conf
@@ -102,10 +104,10 @@ def YOLO_programme():
                     if tid not in vehicle_sent:
                         vehicle_payload = {
                             "type": "vehicle_update",
-                            "camera_id": "cam_01",
+                            "camera_id": camera_id,
                             "track_id": tid,
                             "vehicle_type": label,
-                            "primary_color": extract_dominant_color(frame, tr["bbox"])
+                            "primary_color": "Unknown"  # @TODO extract_dominant_color(frame, tr["bbox"])
                         }
                         emit(vehicle_payload)
                         vehicle_sent.add(tid)
@@ -120,12 +122,12 @@ def YOLO_programme():
                                 last_lpr_request[tid] = now
                             except queue.Full:
                                 pass
-
+  
                 # --- JSON: person info ---
                 elif tr.get("label") == "person" and tid not in person_sent:
                     person_payload = {
                         "type": "person_update",
-                        "camera_id": "cam_01",
+                        "camera_id": camera_id,
                         "track_id": tid,
                         "behavior": "unknown",  # @TODO infer_human_behavior(tr) implemented once track history accumulation made
                         "confidence": conf
@@ -154,7 +156,7 @@ def YOLO_programme():
                 # --- JSON: update vehicle row with license plate ---
                 plate_payload = {
                     "type": "plate_detected",
-                    "camera_id": "cam_01",
+                    "camera_id": camera_id,
                     "track_id": tid,
                     "plate_text": res["plate_text"],
                     "plate_confidence": res["plate_conf"]
@@ -187,7 +189,7 @@ def YOLO_programme():
             for tid in ended_tracks:
                 emit({
                     "type": "event_closed",
-                    "camera_id": "cam_01",
+                    "camera_id": camera_id,
                     "track_id": tid
                 })
                 seen_tracks.remove(tid)
