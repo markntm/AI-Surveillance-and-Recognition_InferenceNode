@@ -162,7 +162,7 @@ def YOLO_programme():
                     "plate_confidence": res["plate_conf"]
                 }
                 emit(plate_payload)
-                print("[JSON PACKAGE] Vehicle License Plate Added.")
+                print(f"[JSON PACKAGE] Vehicle License Plate Added: {res["plate_text"]}.")
 
             # 5) Overlay plate_cache on frame (for tracks still visible)
             for tid, data in list(plate_cache.items()):
