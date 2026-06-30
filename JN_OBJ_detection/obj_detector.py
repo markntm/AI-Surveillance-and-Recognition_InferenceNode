@@ -1,4 +1,6 @@
+import logging
 from ultralytics import YOLO
+from ultralytics.utils import LOGGER
 
 class ObjectDetector:
     def __init__(self, model_path, conf=0.5):
@@ -14,6 +16,8 @@ class ObjectDetector:
             detections: list of dicts:
               {'bbox': [x1,y1,x2,y2], 'conf': float, 'class_id': int, 'label': str}
         """
+        LOGGER.setLevel(logging.ERROR)
+
         results = self.model.predict(source=frame, conf=self.conf)  # returns Results object
         if len(results) == 0:
             return []

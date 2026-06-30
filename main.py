@@ -87,7 +87,7 @@ def YOLO_programme():
                         "confidence": conf
                     })
                     seen_tracks.add(tid)
-                    print(f"JSON Package Created: {label}.")
+                    print(f"[JSON PACKAGE] Created: {label}.")
 
                 # Draw box + id
                 cv2.rectangle(frame, (x1,y1), (x2,y2), (0, 255 ,0), 2)
@@ -111,7 +111,7 @@ def YOLO_programme():
                         }
                         emit(vehicle_payload)
                         vehicle_sent.add(tid)
-                        print("JSON Package: Vehicle without Licence Plate Detected.")
+                        print("[JSON PACKAGE] Vehicle without Licence Plate Detected.")
 
                     if now - last > constants["LPR_COOLDOWN_SECONDS"]:
                         # crop vehicle region
@@ -134,7 +134,7 @@ def YOLO_programme():
                     }
                     emit(person_payload)
                     person_sent.add(tid)
-                    print("JSON Package: Person Detected.")
+                    print("[JSON PACKAGE] Person Detected.")
 
             # 4) Handle LPR results that workers produced
             while not lpr_result_q.empty():
@@ -162,6 +162,7 @@ def YOLO_programme():
                     "plate_confidence": res["plate_conf"]
                 }
                 emit(plate_payload)
+                print("[JSON PACKAGE] Vehicle License Plate Added.")
 
             # 5) Overlay plate_cache on frame (for tracks still visible)
             for tid, data in list(plate_cache.items()):
@@ -192,6 +193,7 @@ def YOLO_programme():
                     "camera_id": camera_id,
                     "track_id": tid
                 })
+                print(f"[JSON PACKAGE] Closed.\n")
                 seen_tracks.remove(tid)
                 vehicle_sent.discard(tid)
                 person_sent.discard(tid)

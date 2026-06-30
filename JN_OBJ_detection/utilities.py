@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from collections import Counter
 
+
 def crop_bbox(frame, bbox, pad=0):
     """Crop box with optional padding, keep it inside frame bounds."""
     h, w = frame.shape[:2]
@@ -30,6 +31,8 @@ def extract_dominant_color(image, k=3):
     """
     if image is None or image.size == 0:
         return None
+
+    print(f"[Dominant Vehicle Color] Running Task.")
 
     # Convert image to a 2D array of pixels
     pixels = image.reshape((-1, 3))
@@ -68,6 +71,8 @@ def infer_human_behavior(track_history):
     # - Running
     if len(track_history) < 2:
         return "Unknown"
+
+    print(f"[Human Behavior] Running Task.")
 
     # Calculate simple speed estimation
     dx = track_history[-1][0] - track_history[0][0]

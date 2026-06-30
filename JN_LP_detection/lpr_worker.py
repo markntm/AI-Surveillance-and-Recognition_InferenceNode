@@ -28,6 +28,7 @@ class LPRWorker(threading.Thread):
             except Exception:
                 continue
 
+            print(f"[LPRWorker] Running Task: {task}.")
             track_id, vehicle_crop, meta = task
             ts = time.time()
 
